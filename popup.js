@@ -4,7 +4,7 @@ const message = document.getElementById("message");
 toggle.addEventListener("click", async () => {
   message.textContent = "";
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const supported = ["q.yingjiesheng.com", "www.liepin.com", "www.zhipin.com"];
+  const supported = ["q.yingjiesheng.com", "liepin.com", "www.zhipin.com"];
   if (!tab?.id || !supported.some((host) => tab.url?.includes(host))) {
     message.textContent = "请先打开应届生、猎聘或 BOSS直聘的职位页。";
     return;

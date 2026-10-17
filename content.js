@@ -288,16 +288,23 @@
     shouldOpen() {
       return /\/zhaopin|\/job\/|\/career/.test(location.pathname);
     },
+    pagerRoot() {
+      return (
+        document.querySelector(".list-pagination-box .ant-pagination") ||
+        document.querySelector(".ant-c-pagination") ||
+        document.querySelector(".ant-pagination")
+      );
+    },
     hasPager() {
-      return Boolean(document.querySelector(".list-pagination-box, .ant-pagination"));
+      return Boolean(this.pagerRoot());
     },
     pagerItem(kind) {
-      return document.querySelector(`.list-pagination-box .ant-pagination-${kind}, .ant-pagination-${kind}`);
+      const root = this.pagerRoot();
+      if (!root) return null;
+      return root.querySelector(`.ant-pagination-${kind}, .ant-c-pagination-${kind}`);
     },
     getCurrentPage() {
-      const active = document.querySelector(
-        ".list-pagination-box .ant-pagination-item-active, .ant-pagination-item-active",
-      );
+      const active = this.pagerRoot()?.querySelector(".ant-pagination-item-active, .ant-c-pagination-item-active");
       const page = active ? Number.parseInt(active.getAttribute("title") || active.textContent, 10) : 1;
       return Number.isFinite(page) && page > 0 ? page : 1;
     },
@@ -308,48 +315,65 @@
     canMove(kind) {
       const item = this.pagerItem(kind);
       if (!item) return false;
-      return !item.classList.contains("ant-pagination-disabled") && item.getAttribute("aria-disabled") !== "true";
+      const disabled = item.classList.contains("ant-pagination-disabled") || item.classList.contains("ant-c-pagination-disabled");
+      return !disabled && item.getAttribute("aria-disabled") !== "true";
     },
     pageLink(page) {
-      const item = document.querySelector(
-        `.list-pagination-box .ant-pagination-item-${page}, .ant-pagination-item-${page}`,
-      );
-      return item?.querySelector("a") || item;
+      const item = this.pagerRoot()?.querySelector(`.ant-pagination-item-${page}, .ant-c-pagination-item-${page}`);
+      return item?.querySelector("a, button") || item || null;
     },
     readTotalPages() {
-      const numbers = [...document.querySelectorAll(".list-pagination-box .ant-pagination-item, .ant-pagination-item")]
+      const root = this.pagerRoot();
+      if (!root) return null;
+      const numbers = [...root.querySelectorAll(".ant-pagination-item, .ant-c-pagination-item")]
         .map((item) => Number.parseInt(item.getAttribute("title") || item.textContent, 10))
         .filter((item) => Number.isFinite(item));
       return numbers.length ? Math.max(...numbers) : null;
     },
+    cards() {
+      const listed = [...document.querySelectorAll(".job-list-box .jobCardPcContainer")];
+      if (listed.length) return listed;
+      if (location.hostname.startsWith("c.") || location.pathname.includes("/job/record/")) {
+        return [...document.querySelectorAll(".jobCardPcContainer")];
+      }
+      return [];
+    },
     pageSignature() {
-      const titles = [...document.querySelectorAll(".job-list-box .jobCardPcContainer .jobTitleBox > .ellipsis-1")]
+      const titles = this.cards()
         .slice(0, 5)
-        .map((node) => textOf(node));
+        .map((card) => textOf(card.querySelector(".jobTitleBox > .ellipsis-1, .job-title")));
       if (!titles.length && document.querySelector(".job-apply-container .job-title")) {
         titles.push(textOf(document.querySelector(".job-apply-container .job-title")));
       }
       const applied = document.querySelectorAll(".jobCardPcContainer, .job-apply-container").length
         ? [...document.querySelectorAll(".jobCardPcContainer, .job-apply-container")].filter((card) =>
-            /已投递|已沟通/.test(card.innerText || ""),
+            /已投递|已沟通|继续聊|停止招聘/.test(card.innerText || ""),
           ).length
         : 0;
       if (titles.length) return `${titles.join("|")}#${applied}`;
-      if (/暂无职位|没有找到/.test(document.body.innerText || "")) return "empty";
+      if (/暂无职位|没有找到|暂无投递记录/.test(document.body.innerText || "")) return "empty";
       return "";
     },
     isListLoading() {
-      return [...document.querySelectorAll(".ant-spin-spinning, .searchjobs-spin-loading-box")].some(isVisible);
+      if ([...document.querySelectorAll(".ant-spin-spinning, .searchjobs-spin-loading-box")].some(isVisible)) return true;
+      const section = document.querySelector('[class*="list-section"]');
+      return Boolean(section && /加载中/.test(section.textContent || ""));
     },
     applyButton(card) {
       const apply = [...card.querySelectorAll('[data-selector="apply-job"]')].find(
         (node) => isVisible(node) && !/已投/.test(node.textContent || ""),
       );
       if (apply) return apply;
+      const chat = card.querySelector('.chatBtnBox button, [data-nick="recruiter-info-box-chat-btn"] button');
+      if (chat && isVisible(chat) && /^聊一聊$/.test((chat.innerText || "").replace(/\s/g, ""))) return chat;
       return buttonByText(card, /^(聊一聊|立即沟通|投简历)$/);
     },
     applied(card) {
-      return [...card.querySelectorAll("a, button")].some((node) => /已投递|已沟通|继续沟通/.test((node.innerText || "").trim()));
+      const acted = [...card.querySelectorAll("a, button")].some((node) =>
+        /已投递|已沟通|继续沟通|继续聊/.test((node.innerText || "").replace(/\s/g, "")),
+      );
+      if (acted) return true;
+      return [...card.querySelectorAll("div")].some((node) => node.children.length === 0 && (node.textContent || "").trim() === "停止招聘");
     },
     cardJob(card, page, index) {
       const link = card.querySelector('a[href*="/job/"]');
@@ -359,7 +383,7 @@
         /\d+\s*k|面议/i.test((node.textContent || "").trim()),
       );
       const area = textOf(card.querySelector(".jobTitleBox .ellipsis-1 + div .ellipsis-1, .jobTitleBox .ellipsis-1 + div"));
-      const href = link?.href || location.href;
+      const href = link?.href || "";
       const ready = Boolean(this.applyButton(card));
       return {
         key: jobPath(href) || `${page}::${title}::${company}`,
@@ -376,7 +400,7 @@
     },
     scrapePage() {
       const page = this.getCurrentPage();
-      const cards = [...document.querySelectorAll(".job-list-box .jobCardPcContainer")];
+      const cards = this.cards();
       if (cards.length) return cards.map((card, index) => this.cardJob(card, page, index));
       const detail = document.querySelector(".job-apply-container");
       if (!detail) return [];
@@ -387,7 +411,7 @@
       return [job];
     },
     findCard(job) {
-      const cards = [...document.querySelectorAll(".job-list-box .jobCardPcContainer")];
+      const cards = this.cards();
       const matched = cards.find((card) => {
         const link = card.querySelector('a[href*="/job/"]');
         return sameHref(link?.href, job.href);
@@ -396,7 +420,11 @@
       const detail = document.querySelector(".job-apply-container");
       if (detail && sameHref(location.href, job.href)) return detail;
       return (
-        cards.find((card) => textOf(card.querySelector(".jobTitleBox > .ellipsis-1")) === job.title) || null
+        cards.find((card) => {
+          const title = textOf(card.querySelector(".jobTitleBox > .ellipsis-1, .job-title"));
+          const company = textOf(card.querySelector(".companyName"));
+          return title === job.title && company === job.company;
+        }) || null
       );
     },
     async clickApply(card) {
@@ -639,15 +667,16 @@
 
   function applyHostBox(host) {
     if (!host) return;
+    const base = "display:block;position:fixed;z-index:2147483646;margin:0;padding:0;border:0;background:transparent;color:#221c16;font-size:16px;line-height:normal;";
     if (!state.open) {
       const launcherLeft = Math.min(Math.max(8, state.panelLeft), Math.max(8, window.innerWidth - 80));
-      host.style.cssText = `position:fixed;z-index:2147483646;left:${launcherLeft}px;bottom:16px;width:64px;height:64px;`;
+      host.style.cssText = `${base}overflow:visible;left:${launcherLeft}px;bottom:16px;width:64px;height:64px;`;
       return;
     }
     clampPanelPos();
     const width = Math.min(372, window.innerWidth - 24);
     const height = Math.max(280, Math.min(window.innerHeight - 24, window.innerHeight - state.panelTop - 12));
-    host.style.cssText = `position:fixed;z-index:2147483646;top:${Math.round(state.panelTop)}px;left:${Math.round(state.panelLeft)}px;width:${Math.round(width)}px;height:${Math.round(height)}px;`;
+    host.style.cssText = `${base}overflow:hidden;contain:layout paint;top:${Math.round(state.panelTop)}px;left:${Math.round(state.panelLeft)}px;width:${Math.round(width)}px;height:${Math.round(height)}px;`;
   }
 
   function setStatus(text) {
@@ -1069,7 +1098,7 @@
     stop.type = "button";
     stop.disabled = true;
     foot.append(apply, stop);
-    const status = el("div", "status", "打开职位列表后点「刷新本页」。猎聘点「投简历」或「聊一聊」，BOSS直聘点「立即沟通」。");
+    const status = el("div", "status", "打开职位列表后点「刷新本页」。猎聘搜索页点「投简历」或「聊一聊」，应聘记录点「聊一聊」。BOSS直聘点「立即沟通」。");
 
     panel.append(head, tools, checkline, actions, stats, list, log, foot, status);
     shadow.append(launcher, panel);
@@ -1195,7 +1224,9 @@
   }
 
   async function boot() {
-    if (document.getElementById(HOST_ID)) return;
+    if (window.__yjsBatchBooted) return;
+    window.__yjsBatchBooted = true;
+    document.querySelectorAll(`#${HOST_ID}`).forEach((node) => node.remove());
     try {
       const saved = await chrome.storage.local.get({ delayMs: 1800, hideApplied: true, panelLeft: 12, panelTop: 12 });
       state.delayMs = Number(saved.delayMs) || 1800;

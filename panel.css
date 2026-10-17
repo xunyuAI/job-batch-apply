@@ -1,5 +1,19 @@
 :host {
-  all: initial;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #221c16;
+  font-size: 16px;
+  line-height: normal;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 * {
