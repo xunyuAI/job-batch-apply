@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">批量投递</title>
+  <desc id="desc">在应届生、猎聘、BOSS直聘勾选岗位标题，再逐个点击申请或沟通。</desc>
+  <rect width="1200" height="420" rx="28" fill="#f3eadc"/>
+  <rect x="24" y="24" width="1152" height="372" rx="22" fill="none" stroke="#221c16" stroke-opacity="0.12"/>
+  <g transform="translate(64 72)">
+    <text fill="#6f655c" font-family="PingFang SC, Hiragino Sans GB, sans-serif" font-size="18" letter-spacing="3">CHROME 扩展 · 三个招聘站</text>
+    <text y="78" fill="#221c16" font-family="Songti SC, STSong, serif" font-size="72" font-weight="700">批量投递</text>
+    <text y="132" fill="#221c16" font-family="PingFang SC, Hiragino Sans GB, sans-serif" font-size="24">先看见标题，再自己勾选，最后按页点击申请。</text>
+    <g transform="translate(0 168)">
+      <rect width="132" height="36" rx="18" fill="#221c16"/>
+      <text x="66" y="24" text-anchor="middle" fill="#f7f1e6" font-family="PingFang SC, sans-serif" font-size="16">应届生</text>
+      <rect x="144" width="108" height="36" rx="18" fill="#be3a2b"/>
+      <text x="198" y="24" text-anchor="middle" fill="#fffaf3" font-family="PingFang SC, sans-serif" font-size="16">猎聘</text>
+      <rect x="264" width="156" height="36" rx="18" fill="none" stroke="#221c16"/>
+      <text x="342" y="24" text-anchor="middle" fill="#221c16" font-family="PingFang SC, sans-serif" font-size="16">BOSS直聘</text>
+    </g>
+    <text y="248" fill="#6f655c" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16">勾选本页或全部页 · 已申请自动跳过 · 位置可拖动</text>
+  </g>
+  <g transform="translate(700 48)">
+    <rect width="436" height="324" rx="18" fill="#fffaf3" stroke="#221c16" stroke-opacity="0.18"/>
+    <g transform="translate(22 20)">
+      <g transform="rotate(-8 18 18)">
+        <rect width="36" height="36" rx="4" fill="none" stroke="#be3a2b" stroke-width="2"/>
+        <text x="18" y="25" text-anchor="middle" fill="#be3a2b" font-family="Songti SC, STSong, serif" font-size="18" font-weight="700">投</text>
+      </g>
+      <text x="52" y="18" fill="#221c16" font-family="Songti SC, STSong, serif" font-size="22" font-weight="700">批量投递</text>
+      <text x="52" y="40" fill="#6f655c" font-family="PingFang SC, sans-serif" font-size="13">猎聘 · 本页 20 · 已勾选 2</text>
+    </g>
+    <g transform="translate(22 84)" font-family="PingFang SC, sans-serif">
+      <rect width="392" height="58" rx="12" fill="#fffaf3" stroke="#be3a2b" stroke-width="1.5"/>
+      <rect x="14" y="20" width="16" height="16" rx="3" fill="#be3a2b"/>
+      <path d="M17 28 l3 3 6-7" fill="none" stroke="#fffaf3" stroke-width="2"/>
+      <text x="42" y="26" fill="#221c16" font-size="16" font-weight="700">产品经理</text>
+      <text x="300" y="26" fill="#2f5d50" font-size="13">可申请</text>
+      <text x="42" y="46" fill="#6f655c" font-size="13">顺丰 · 成都 · 20-30k</text>
+    </g>
+    <g transform="translate(22 152)" font-family="PingFang SC, sans-serif">
+      <rect width="392" height="58" rx="12" fill="#fffaf3"/>
+      <rect x="14" y="20" width="16" height="16" rx="3" fill="none" stroke="#221c16" stroke-opacity="0.35"/>
+      <text x="42" y="26" fill="#221c16" font-size="16" font-weight="700">数据产品经理</text>
+      <text x="300" y="26" fill="#2f5d50" font-size="13">可申请</text>
+      <text x="42" y="46" fill="#6f655c" font-size="13">上海 · 30-60k</text>
+    </g>
+    <g transform="translate(22 220)" font-family="PingFang SC, sans-serif">
+      <rect width="392" height="58" rx="12" fill="#fffaf3"/>
+      <rect x="14" y="20" width="16" height="16" rx="3" fill="#e7e0d4"/>
+      <text x="42" y="26" fill="#6f655c" font-size="16">增长产品经理</text>
+      <text x="300" y="26" fill="#6f655c" font-size="13">已申请</text>
+      <text x="42" y="46" fill="#6f655c" font-size="13">北京 · 25-40k</text>
+    </g>
+    <g transform="translate(22 286)">
+      <rect width="300" height="28" rx="14" fill="#be3a2b"/>
+      <text x="150" y="19" text-anchor="middle" fill="#fffaf3" font-family="PingFang SC, sans-serif" font-size="13">投递已勾选（2）</text>
+    </g>
+  </g>
+</svg>

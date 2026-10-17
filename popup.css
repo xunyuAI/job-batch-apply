@@ -1,0 +1,92 @@
+:root {
+  color-scheme: light;
+  --paper: #f3eadc;
+  --ink: #221c16;
+  --seal: #be3a2b;
+  --muted: #6f655c;
+  --line: rgba(34, 28, 22, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 320px;
+  padding: 16px 16px 14px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(190, 58, 43, 0.16), transparent 42%),
+    var(--paper);
+  color: var(--ink);
+  font-family: "Songti SC", "STSong", "Iowan Old Style", Palatino, serif;
+}
+
+header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+header p,
+#message,
+li {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.seal {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 2px solid var(--seal);
+  border-radius: 4px;
+  color: var(--seal);
+  font-size: 22px;
+  font-weight: 700;
+  transform: rotate(-8deg);
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: #f7f1e6;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--seal);
+}
+
+ol {
+  margin: 12px 0 0;
+  padding-left: 18px;
+}
+
+li + li {
+  margin-top: 4px;
+}
+
+#message {
+  min-height: 16px;
+  margin-top: 10px;
+  color: var(--seal);
+}

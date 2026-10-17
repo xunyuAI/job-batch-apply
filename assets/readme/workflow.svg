@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="220" viewBox="0 0 1200 220" role="img" aria-labelledby="title desc">
+  <title id="title">使用顺序</title>
+  <desc id="desc">登录招聘站，读出当前页或全部页的标题，勾选后再点击申请。</desc>
+  <rect width="1200" height="220" rx="28" fill="#f3eadc"/>
+  <g font-family="PingFang SC, Hiragino Sans GB, sans-serif">
+    <g transform="translate(48 48)">
+      <text fill="#be3a2b" font-family="ui-monospace, Menlo, monospace" font-size="16">01</text>
+      <text y="42" fill="#221c16" font-family="Songti SC, STSong, serif" font-size="28" font-weight="700">打开列表</text>
+      <text y="78" fill="#6f655c" font-size="16">登录后进入职位搜索页</text>
+      <text y="102" fill="#6f655c" font-size="16">左侧面板读出标题</text>
+    </g>
+    <path d="M360 110 H430" stroke="#221c16" stroke-opacity="0.25" stroke-width="2"/>
+    <g transform="translate(460 48)">
+      <text fill="#be3a2b" font-family="ui-monospace, Menlo, monospace" font-size="16">02</text>
+      <text y="42" fill="#221c16" font-family="Songti SC, STSong, serif" font-size="28" font-weight="700">自己勾选</text>
+      <text y="78" fill="#6f655c" font-size="16">可筛标题、公司、城市</text>
+      <text y="102" fill="#6f655c" font-size="16">全选本页或全部页</text>
+    </g>
+    <path d="M760 110 H830" stroke="#221c16" stroke-opacity="0.25" stroke-width="2"/>
+    <g transform="translate(860 48)">
+      <text fill="#be3a2b" font-family="ui-monospace, Menlo, monospace" font-size="16">03</text>
+      <text y="42" fill="#221c16" font-family="Songti SC, STSong, serif" font-size="28" font-weight="700">点击申请</text>
+      <text y="78" fill="#6f655c" font-size="16">只点你勾过的岗位</text>
+      <text y="102" fill="#6f655c" font-size="16">已申请的会跳过</text>
+    </g>
+  </g>
+</svg>

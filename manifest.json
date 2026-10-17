@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "批量投递",
+  "version": "1.1.0",
+  "description": "在应届生、猎聘、BOSS直聘列出岗位标题，勾选后按页点击申请或沟通。",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://q.yingjiesheng.com/*",
+    "https://www.liepin.com/*",
+    "https://www.zhipin.com/*"
+  ],
+  "action": {
+    "default_title": "批量投递",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://q.yingjiesheng.com/*",
+        "https://www.liepin.com/*",
+        "https://www.zhipin.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["panel.css"],
+      "matches": [
+        "https://q.yingjiesheng.com/*",
+        "https://www.liepin.com/*",
+        "https://www.zhipin.com/*"
+      ]
+    }
+  ]
+}
