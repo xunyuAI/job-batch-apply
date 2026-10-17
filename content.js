@@ -1,5 +1,364 @@
 (() => {
   const HOST_ID = "yjs-batch-host";
+  const PANEL_CSS = `
+:host {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #221c16;
+  font-size: 16px;
+  line-height: normal;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.launcher,
+.panel {
+  font-family: "Songti SC", "STSong", "Iowan Old Style", Palatino, serif;
+  color: #221c16;
+}
+
+.launcher {
+  width: 64px;
+  height: 64px;
+  border: 2px solid #be3a2b;
+  border-radius: 8px;
+  background: #f7f1e6;
+  color: #be3a2b;
+  box-shadow: 4px 4px 0 rgba(34, 28, 22, 0.18);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
+  cursor: pointer;
+  transform: rotate(-8deg);
+}
+
+.launcher:hover {
+  background: #be3a2b;
+  color: #f7f1e6;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(34, 28, 22, 0.22);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.4), transparent 90px),
+    #f3eadc;
+  box-shadow: 8px 10px 0 rgba(34, 28, 22, 0.12);
+  cursor: grab;
+  touch-action: none;
+}
+
+.panel.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 14px 10px;
+  user-select: none;
+}
+
+.seal {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  place-items: center;
+  border: 2px solid #be3a2b;
+  border-radius: 4px;
+  color: #be3a2b;
+  font-size: 18px;
+  font-weight: 700;
+  transform: rotate(-8deg);
+}
+
+.brand {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.sub {
+  margin: 2px 0 0;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 12px;
+}
+
+.ghost {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tools,
+.actions,
+.foot {
+  padding: 0 14px;
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: 1fr 108px;
+  gap: 8px;
+}
+
+.delay {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 12px;
+}
+
+.delay input {
+  width: 64px;
+  padding-inline: 8px;
+}
+
+input[type="search"],
+input[type="number"] {
+  width: 100%;
+  border: 1px solid rgba(34, 28, 22, 0.18);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 252, 247, 0.8);
+  color: #221c16;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 13px;
+}
+
+input:focus {
+  outline: 2px solid rgba(190, 58, 43, 0.35);
+  border-color: transparent;
+}
+
+.checkline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 14px 0;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+button.tiny,
+button.go,
+button.stop {
+  border: 1px solid rgba(34, 28, 22, 0.18);
+  border-radius: 999px;
+  background: transparent;
+  color: #221c16;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  cursor: pointer;
+}
+
+button.tiny {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+button.tiny:hover,
+button.stop:hover {
+  border-color: #221c16;
+}
+
+button.tiny.primary {
+  border-color: #221c16;
+  background: #221c16;
+  color: #f7f1e6;
+}
+
+.stats,
+.status,
+.log {
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+}
+
+.stats {
+  margin: 10px 14px 0;
+  color: #6f655c;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.list {
+  flex: 1;
+  margin: 8px 8px 0;
+  overflow: auto;
+  padding: 0 6px 8px;
+}
+
+.group {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 8px 0 4px;
+  padding: 4px 2px;
+  background: #f3eadc;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 6px;
+  padding: 8px 8px 7px;
+  border-radius: 12px;
+  background: rgba(255, 252, 247, 0.72);
+}
+
+.row.is-on {
+  background: #fffaf3;
+  box-shadow: inset 2px 0 0 #be3a2b;
+}
+
+.row.is-running {
+  outline: 1px solid #be3a2b;
+}
+
+.row input {
+  margin-top: 3px;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.meta {
+  margin: 3px 0 0;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.meta a {
+  color: #2f5d50;
+  text-decoration: none;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(47, 93, 80, 0.12);
+  color: #2f5d50;
+  font-style: normal;
+  font-size: 11px;
+}
+
+.badge.warn {
+  background: rgba(190, 58, 43, 0.12);
+  color: #be3a2b;
+}
+
+.badge.mute {
+  background: rgba(34, 28, 22, 0.08);
+  color: #6f655c;
+}
+
+.empty {
+  padding: 28px 12px;
+  color: #6f655c;
+  font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.log {
+  max-height: 72px;
+  margin: 6px 14px 0;
+  overflow: auto;
+  color: #6f655c;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.log div + div {
+  margin-top: 2px;
+}
+
+.foot {
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  gap: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+button.go,
+button.stop {
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+button.go {
+  border-color: #be3a2b;
+  background: #be3a2b;
+  color: #fffaf3;
+}
+
+button.go:disabled,
+button.tiny:disabled,
+button.stop:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.status {
+  min-height: 32px;
+  margin: 0 14px 12px;
+  color: #221c16;
+  font-size: 12px;
+  line-height: 1.45;
+}
+`;
   const ARM_THRESHOLD = 30;
   const STATUS_LABEL = {
     ready: "可申请",
@@ -667,16 +1026,54 @@
 
   function applyHostBox(host) {
     if (!host) return;
-    const base = "display:block;position:fixed;z-index:2147483646;margin:0;padding:0;border:0;background:transparent;color:#221c16;font-size:16px;line-height:normal;";
+    const box = {
+      overflow: "hidden",
+      top: "auto",
+      bottom: "auto",
+      left: "8px",
+      width: "372px",
+      height: "480px",
+    };
     if (!state.open) {
       const launcherLeft = Math.min(Math.max(8, state.panelLeft), Math.max(8, window.innerWidth - 80));
-      host.style.cssText = `${base}overflow:visible;left:${launcherLeft}px;bottom:16px;width:64px;height:64px;`;
-      return;
+      box.overflow = "visible";
+      box.bottom = "16px";
+      box.left = `${launcherLeft}px`;
+      box.width = "64px";
+      box.height = "64px";
+    } else {
+      clampPanelPos();
+      const width = Math.min(372, window.innerWidth - 24);
+      const height = Math.max(280, Math.min(window.innerHeight - 24, window.innerHeight - state.panelTop - 12));
+      box.top = `${Math.round(state.panelTop)}px`;
+      box.left = `${Math.round(state.panelLeft)}px`;
+      box.width = `${Math.round(width)}px`;
+      box.height = `${Math.round(height)}px`;
     }
-    clampPanelPos();
-    const width = Math.min(372, window.innerWidth - 24);
-    const height = Math.max(280, Math.min(window.innerHeight - 24, window.innerHeight - state.panelTop - 12));
-    host.style.cssText = `${base}overflow:hidden;contain:layout paint;top:${Math.round(state.panelTop)}px;left:${Math.round(state.panelLeft)}px;width:${Math.round(width)}px;height:${Math.round(height)}px;`;
+    const fixed = {
+      display: "block",
+      position: "fixed",
+      "z-index": "2147483646",
+      margin: "0",
+      padding: "0",
+      border: "0",
+      background: "transparent",
+      color: "#221c16",
+      "font-size": "16px",
+      "line-height": "normal",
+      "font-family": '"PingFang SC", "Hiragino Sans GB", sans-serif',
+      contain: "layout paint",
+      "box-sizing": "border-box",
+      "max-width": "100vw",
+      overflow: box.overflow,
+      top: box.top,
+      right: "auto",
+      bottom: box.bottom,
+      left: box.left,
+      width: box.width,
+      height: box.height,
+    };
+    for (const [key, value] of Object.entries(fixed)) host.style.setProperty(key, value, "important");
   }
 
   function setStatus(text) {
@@ -1029,15 +1426,8 @@
 
   function renderShell(shadow) {
     const style = document.createElement("style");
+    style.textContent = PANEL_CSS;
     shadow.append(style);
-    fetch(chrome.runtime.getURL("panel.css"))
-      .then((response) => response.text())
-      .then((css) => {
-        style.textContent = css;
-      })
-      .catch(() => {
-        setStatus("面板样式没有加载出来，刷新页面后再试。");
-      });
 
     const launcher = el("button", "launcher", "投");
     launcher.type = "button";
@@ -1049,7 +1439,7 @@
     const head = el("div", "head");
     head.append(el("span", "seal", "投"));
     const titles = el("div");
-    titles.append(el("h1", "", "批量投递"), el("p", "sub", adapter().label));
+    titles.append(el("p", "brand", "批量投递"), el("p", "sub", adapter().label));
     const close = el("button", "ghost", "收起");
     close.type = "button";
     head.append(titles, close);

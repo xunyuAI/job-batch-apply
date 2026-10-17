@@ -89,11 +89,12 @@
   transform: rotate(-8deg);
 }
 
-h1 {
+.brand {
   margin: 0;
   font-size: 18px;
   line-height: 1.2;
   letter-spacing: 0.06em;
+  font-weight: 700;
 }
 
 .sub {
