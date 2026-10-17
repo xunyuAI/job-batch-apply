@@ -1,5 +1,10 @@
 (() => {
   const HOST_ID = "yjs-batch-host";
+  // Re-injection must reuse the existing controller, including while storage is loading.
+  if (window.__yjsBatchInstance) {
+    window.__yjsBatchInstance.removeDuplicates();
+    return;
+  }
   const PANEL_CSS = `
 :host {
   display: block;
@@ -389,6 +394,37 @@ button.stop:disabled {
   };
 
   const ui = {};
+  let panelHost = null;
+
+  function isBatchPanel(panel) {
+    return panel?.matches("aside.panel") &&
+      panel.querySelector('.tools input[placeholder="筛选标题、公司、城市"]') &&
+      panel.querySelector(".head")?.textContent.includes("批量投递") &&
+      panel.querySelector("button.go")?.textContent.startsWith("投递已勾选");
+  }
+
+  function removeDuplicates(root = document) {
+    // Old releases and temporary fixes can leave hosts with a different ID.
+    const nodes = root instanceof Element ? [root, ...root.querySelectorAll("*")] : [...root.querySelectorAll("*")];
+    for (const node of nodes) {
+      if (node === panelHost) continue;
+      if (node.id === HOST_ID || node.id.startsWith(`${HOST_ID}-`)) {
+        node.remove();
+        continue;
+      }
+      if (node.shadowRoot && [...node.shadowRoot.querySelectorAll("aside.panel")].some(isBatchPanel)) {
+        node.remove();
+        continue;
+      }
+      if (isBatchPanel(node)) {
+        const launcher = node.parentElement?.querySelector('button.launcher[title="打开批量投递"]');
+        launcher?.remove();
+        node.remove();
+      }
+    }
+  }
+
+  window.__yjsBatchInstance = { removeDuplicates };
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -1425,9 +1461,9 @@ button.stop:disabled {
   }
 
   function renderShell(shadow) {
-    const style = document.createElement("style");
-    style.textContent = PANEL_CSS;
-    shadow.append(style);
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(PANEL_CSS);
+    shadow.adoptedStyleSheets = [sheet];
 
     const launcher = el("button", "launcher", "投");
     launcher.type = "button";
@@ -1614,9 +1650,8 @@ button.stop:disabled {
   }
 
   async function boot() {
-    if (window.__yjsBatchBooted) return;
     window.__yjsBatchBooted = true;
-    document.querySelectorAll(`#${HOST_ID}`).forEach((node) => node.remove());
+    removeDuplicates();
     try {
       const saved = await chrome.storage.local.get({ delayMs: 1800, hideApplied: true, panelLeft: 12, panelTop: 12 });
       state.delayMs = Number(saved.delayMs) || 1800;
@@ -1628,12 +1663,25 @@ button.stop:disabled {
     }
 
     const host = document.createElement("div");
+    panelHost = host;
     host.id = HOST_ID;
+    host.style.setProperty("visibility", "hidden", "important");
     const shadow = host.attachShadow({ mode: "open" });
-    document.documentElement.append(host);
     state.open = shouldOpen();
     renderShell(shadow);
+    removeDuplicates();
+    document.documentElement.append(host);
     if (state.open) replaceCurrentPage();
+    host.style.setProperty("visibility", "visible", "important");
+
+    const duplicateObserver = new MutationObserver((records) => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (node instanceof Element && node !== panelHost) removeDuplicates(node);
+        }
+      }
+    });
+    duplicateObserver.observe(document.documentElement, { childList: true, subtree: true });
 
     let lastSignature = `${getCurrentPage()}::${pageSignature()}`;
     const observer = new MutationObserver(() => {
@@ -1644,13 +1692,13 @@ button.stop:disabled {
       replaceCurrentPage();
     });
     if (document.body) observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener("resize", () => applyHostBox(document.getElementById(HOST_ID)));
+    window.addEventListener("resize", () => applyHostBox(panelHost));
   }
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message?.type !== "YJS_TOGGLE_PANEL") return;
-    const host = document.getElementById(HOST_ID);
-    if (!host) {
+    const host = panelHost;
+    if (!host?.isConnected) {
       sendResponse({ ok: false });
       return;
     }
