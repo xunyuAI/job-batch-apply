@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>批量投递截图</title>
+    <link rel="stylesheet" href="../panel.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 1280px;
+        height: 800px;
+        overflow: hidden;
+        background: #e7ecf1;
+        font-family: "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+      .page {
+        height: 800px;
+        padding: 28px 28px 28px 408px;
+      }
+      .bar {
+        height: 36px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        background: #f7f8fa;
+      }
+      .card {
+        height: 92px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        background: #fff;
+      }
+      .host {
+        position: fixed;
+        top: 24px;
+        left: 16px;
+        width: 372px;
+        height: 752px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="bar"></div>
+      <div class="card"></div>
+      <div class="card"></div>
+      <div class="card"></div>
+      <div class="card"></div>
+      <div class="card"></div>
+      <div class="card"></div>
+    </div>
+    <div class="host">
+      <aside class="panel">
+        <div class="head">
+          <span class="seal">投</span>
+          <div>
+            <h1>批量投递</h1>
+            <p class="sub">猎聘</p>
+          </div>
+          <button class="ghost" type="button">收起</button>
+        </div>
+        <div class="tools">
+          <input type="search" value="产品" />
+          <label class="delay"><input type="number" value="1.8" />秒</label>
+        </div>
+        <label class="checkline"><input type="checkbox" checked />隐藏已申请</label>
+        <div class="actions">
+          <button class="tiny" type="button">刷新本页</button>
+          <button class="tiny" type="button">读取全部页</button>
+          <button class="tiny primary" type="button">全选本页</button>
+          <button class="tiny" type="button">取消本页</button>
+          <button class="tiny primary" type="button">全选所有页</button>
+          <button class="tiny" type="button">清空勾选</button>
+        </div>
+        <div class="stats">猎聘 · 本页 3 · 已加载 3 · 显示 3 · 已勾选 2</div>
+        <div class="list">
+          <div class="group">第 1 页</div>
+          <label class="row is-on">
+            <input type="checkbox" checked />
+            <span>
+              <p class="title">产品经理</p>
+              <p class="meta">示例公司 · 上海 · 25-40k</p>
+            </span>
+          </label>
+          <label class="row is-on">
+            <input type="checkbox" checked />
+            <span>
+              <p class="title">AI 产品经理</p>
+              <p class="meta">示例团队 · 北京 · 30-50k</p>
+            </span>
+          </label>
+          <label class="row">
+            <input type="checkbox" disabled />
+            <span>
+              <p class="title">增长产品 <em class="badge mute">已申请</em></p>
+              <p class="meta">示例公司 · 深圳 · 20-35k</p>
+            </span>
+          </label>
+        </div>
+        <div class="log"><div>已勾选 2 个岗位，还没有开始点击。</div></div>
+        <div class="foot">
+          <button class="go" type="button">投递已勾选（2）</button>
+          <button class="stop" type="button" disabled>停止</button>
+        </div>
+        <div class="status">应聘记录里点「聊一聊」。继续聊和停止招聘会跳过。</div>
+      </aside>
+    </div>
+  </body>
+</html>
